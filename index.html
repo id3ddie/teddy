@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teddy - byEddie. 🐾</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Comfortaa', cursive, sans-serif;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);
+            overflow-x: hidden;
+            touch-action: manipulation;
+        }
+
+        @keyframes bounce-gentle {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-6px) rotate(0.5deg); }
+        }
+        .dog-float {
+            animation: bounce-gentle 4s ease-in-out infinite;
+        }
+
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.95); }
+            100% { transform: scale(1); }
+        }
+        .pop-effect {
+            animation: pop 0.25s ease;
+        }
+
+        /* Анимация фонтана сердечек */
+        @keyframes float-up {
+            0% { transform: translateY(100vh) scale(0.4) rotate(0deg); opacity: 0; }
+            20% { opacity: 0.95; }
+            100% { transform: translateY(-15vh) scale(1.3) rotate(360deg); opacity: 0; }
+        }
+        .heart {
+            position: absolute;
+            color: #ff3366;
+            animation: float-up 4s linear infinite;
+            bottom: -30px;
+            user-select: none;
+            pointer-events: none;
+            z-index: 20;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-between p-4 relative select-none">
+
+    <!-- Контейнер для сердечек -->
+    <div id="hearts-container" class="absolute inset-0 overflow-hidden pointer-events-none z-20"></div>
+
+    <!-- Заголовок -->
+    <header class="z-10 mt-6 text-center">
+        <h1 class="text-xl sm:text-2xl font-bold text-white drop-shadow-md">
+            Цей сайт створено спеціально <br>для твоєї посмішки, Ксюня 💌
+        </h1>
+    </header>
+
+    <!-- Основной блок с собачкой -->
+    <main class="z-10 flex flex-col items-center justify-center my-auto w-full max-w-sm relative">
+        
+        <div class="relative w-full max-w-[340px] sm:max-w-[380px] dog-float cursor-pointer group" onclick="changeMessage()">
+            
+            <!-- Реалистичный Тедди без фона с прозрачностью -->
+            <div class="relative w-full drop-shadow-2xl transition-transform duration-200 group-hover:scale-[1.01]" id="dog-image">
+                <img src="https://i.postimg.cc/HL8rSKx5/Gemini-Generated-Image-2duk1a2duk1a2duk.jpg" 
+                     alt="Teddie" 
+                     class="w-full h-auto rounded-3xl object-cover shadow-lg border-4 border-white/40"
+                     style="max-height: 400px;" />
+            </div>
+
+            <!-- Имя Teddie на ошейнике -->
+            <br><br><br><br><br><div class="absolute" style="top: 62%; left: 50%; transform: translate(-50%, -50%);">
+                <span class="bg-amber-950/90 text-amber-100 text-[10px] sm:text-xs px-3 py-1 rounded-full font-bold tracking-wider shadow-md uppercase border border-amber-800">
+                    Teddy 🐾
+                </span>
+            </div>
+
+            <!-- Текст поверх таблички / открытки -->
+            <div class="absolute inset-0 flex items-center justify-center pointer-events-none" style="padding: 70% 10% 8% 10%;">
+                <p id="message-text" class="bg-white/90 backdrop-blur-xs px-4 py-2 rounded-2xl text-amber-950 font-bold text-center leading-snug shadow-md transition-opacity duration-300" 
+                   style="font-size: clamp(11px, 3vw, 14px);">
+                    Твоя посмішка додає промені до сонечка ✨
+                </p>
+            </div>
+        </div>
+
+        <p class="text-xs text-white/90 mt-4 drop-shadow animate-pulse text-center">
+            👆 Натисни на Тедді, щоб посміхнутись ще більше
+        </p>
+    </main>
+
+    <!-- Нижняя панель с кнопкой -->
+    <footer class="z-10 mb-6 w-full flex flex-col items-center gap-3">
+        <button onclick="changeMessage()" 
+                class="bg-white text-rose-500 font-bold px-8 py-3 rounded-full shadow-lg hover:bg-rose-50 active:scale-95 transition-all text-sm sm:text-base flex items-center gap-2 border-2 border-rose-200">
+            <span>🐾 Інший текст.</span>
+        </button>
+        <p class="text-[10px] text-grey/70">Цікавий факт, чим більше частота натискань на Тедді, тим більше сердечок <br>випадає з під дисплею. Анімація створена виключно унікалізовано для тебе))</p>
+        <p class="text-[10px] text-grey/70"><i>В випадку, якщо не працює генерація натискаючи на Тедді. <br>(на кшталт база даних дала збій) - треба натиснути "інший текст."</i></p>
+        <p class="text-[10px] text-green/70">Сайт створено власноруч з нуля, спеціально для Ксюні❤️, від Едюні :)</p>
+    </footer>
+
+    <!-- Логика -->
+    <script>
+        const messages = [
+            "Твоя посмішка це скарб сьогодення ✨",
+            "Ти - найкраще що сталось в цьому дні🌸",
+            "В тебе безмежно гарні оченята👀💖",
+            "С тобою цей світ стає яскравіше та миліше☀️",
+            "Ти - повід для посмішки 🥰",
+            "Поруч з тобою хмари розходяться для променів сонечка 🌤️",
+            "Ти неймовірно чарівна наче космос 🚀💫",
+            "Від твого погляду тають навіть айсберги🧊❤️",
+            "Ти - чарування та натхнення цього дня ☕️✨",
+            "Просто знай: ти неймовірна, і Тедді теж з цим згоден 🐶💕",
+            "Генерація закінчилась, але це не кінець, розробник знає набагато більше! 🥰<br> @breezy_eduard"
+        ];
+
+        let currentIndex = 0;
+
+        function changeMessage() {
+            const textElement = document.getElementById('message-text');
+            const dogImage = document.getElementById('dog-image');
+
+            dogImage.classList.add('pop-effect');
+            setTimeout(() => dogImage.classList.remove('pop-effect'), 250);
+
+            textElement.style.opacity = '0';
+
+            setTimeout(() => {
+                currentIndex = (currentIndex + 1) % messages.length;
+                textElement.textContent = messages[currentIndex];
+                textElement.style.opacity = '1';
+            }, 120);
+
+            burstHearts();
+        }
+
+        function burstHearts() {
+            for (let i = 0; i < 15; i++) {
+                setTimeout(createFloatingHeart, i * 50);
+            }
+        }
+
+        function createFloatingHeart() {
+            const container = document.getElementById('hearts-container');
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.innerHTML = ['❤️', '💖', '✨', '🌸', '🐾', '💕', '💘'][Math.floor(Math.random() * 7)];
+            
+            heart.style.left = Math.random() * 85 + 7 + '%';
+            heart.style.fontSize = (Math.random() * 1.3 + 0.8) + 'rem';
+            heart.style.animationDuration = (Math.random() * 1.5 + 2.5) + 's';
+            
+            container.appendChild(heart);
+
+            setTimeout(() => {
+                heart.remove();
+            }, 4000);
+        }
+
+        setInterval(createFloatingHeart, 800);
+    </script>
+</body>
+</html>

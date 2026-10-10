@@ -3,168 +3,397 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teddy - byEddie. 🐾</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;700&display=swap" rel="stylesheet">
+    <title>Особливе запрошення</title>
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
         body {
-            font-family: 'Comfortaa', cursive, sans-serif;
-            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);
-            overflow-x: hidden;
-            touch-action: manipulation;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
         }
 
-        @keyframes bounce-gentle {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-6px) rotate(0.5deg); }
-        }
-        .dog-float {
-            animation: bounce-gentle 4s ease-in-out infinite;
-        }
-
-        @keyframes pop {
-            0% { transform: scale(1); }
-            50% { transform: scale(0.95); }
-            100% { transform: scale(1); }
-        }
-        .pop-effect {
-            animation: pop 0.25s ease;
+        .card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+            position: relative;
+            z-index: 10;
         }
 
-        /* Анимация фонтана сердечек */
-        @keyframes float-up {
-            0% { transform: translateY(100vh) scale(0.4) rotate(0deg); opacity: 0; }
-            20% { opacity: 0.95; }
-            100% { transform: translateY(-15vh) scale(1.3) rotate(360deg); opacity: 0; }
+        /* Шаг 1: Эффект стирания */
+        #scratch-section h2 {
+            color: #d63384;
+            margin-bottom: 10px;
+            font-size: 22px;
         }
-        .heart {
+
+        #scratch-section p {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .canvas-container {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            margin: 0 auto 20px auto;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .hidden-content {
             position: absolute;
-            color: #ff3366;
-            animation: float-up 4s linear infinite;
-            bottom: -30px;
-            user-select: none;
-            pointer-events: none;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: #fff0f3;
+            padding: 15px;
+        }
+
+        .hidden-content img {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .hidden-content p {
+            color: #d63384;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            cursor: pointer;
+            touch-action: none;
+        }
+
+        .btn-reveal {
+            background-color: #ff4d6d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-reveal:hover {
+            background-color: #ff758c;
+        }
+
+        /* Шаг 2: Вопрос */
+        #question-section {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #question-section img {
+            width: 150px;
+            height: 150px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            object-fit: cover;
+        }
+
+        #question-section h2 {
+            color: #d63384;
+            font-size: 20px;
+            margin-bottom: 25px;
+        }
+
+        /* ЗОНА ДЛЯ КНОПОК */
+        .buttons-wrapper {
+            display: flex;
+            gap: 20px;
+            position: relative;
+            width: 100%;
+            height: 80px; /* Фиксированная зона внизу карточки */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .btn-yes {
+            background-color: #2ec4b6;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 18px;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(46, 196, 182, 0.3);
+            z-index: 2;
+        }
+
+        /* Кнопка "Нет" с плавной анимацией прыжка */
+        .btn-no {
+            background-color: #ff9f1c;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 18px;
+            border-radius: 25px;
+            cursor: pointer;
+            position: absolute;
+            /* Плавное перемещение и подпрыгивание */
+            transition: left 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+                        top 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 10px rgba(255, 159, 28, 0.3);
             z-index: 20;
+        }
+
+        /* Анимация подпрыгивания (тряски/скачка) */
+        @keyframes bounceJump {
+            0% { transform: scale(1) translateY(0); }
+            50% { transform: scale(1.15) translateY(-15px); }
+            100% { transform: scale(1) translateY(0); }
+        }
+
+        .jump-anim {
+            animation: bounceJump 0.3s ease;
+        }
+
+        /* Всплывающее уведомление */
+        .toast {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 10px 22px;
+            border-radius: 20px;
+            font-size: 14px;
+            transition: transform 0.25s ease;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Шаг 3: Успех */
+        #success-section {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #success-section h2 {
+            color: #2ec4b6;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        #success-section p {
+            color: #555;
+            font-size: 16px;
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-between p-4 relative select-none">
+<body>
 
-    <!-- Контейнер для сердечек -->
-    <div id="hearts-container" class="absolute inset-0 overflow-hidden pointer-events-none z-20"></div>
-
-    <!-- Заголовок -->
-    <header class="z-10 mt-6 text-center">
-        <h1 class="text-xl sm:text-2xl font-bold text-white drop-shadow-md">
-            Цей сайт створено спеціально <br>для твоєї посмішки, Ксюня 💌
-        </h1>
-    </header>
-
-    <!-- Основной блок с собачкой -->
-    <main class="z-10 flex flex-col items-center justify-center my-auto w-full max-w-sm relative">
-        
-        <div class="relative w-full max-w-[340px] sm:max-w-[380px] dog-float cursor-pointer group" onclick="changeMessage()">
+    <div class="card" id="mainCard">
+        <!-- Шаг 1: Стирание стекла -->
+        <div id="scratch-section">
+            <h2>За цим склом дещо особливе ✨</h2>
+            <p>Потрібно стерти гумкою зайве</p>
             
-            <!-- Реалистичный Тедди без фона с прозрачностью -->
-            <div class="relative w-full drop-shadow-2xl transition-transform duration-200 group-hover:scale-[1.01]" id="dog-image">
-                <img src="https://i.postimg.cc/HL8rSKx5/Gemini-Generated-Image-2duk1a2duk1a2duk.jpg" 
-                     alt="Teddie" 
-                     class="w-full h-auto rounded-3xl object-cover shadow-lg border-4 border-white/40"
-                     style="max-height: 400px;" />
+            <div class="canvas-container">
+                <div class="hidden-content">
+                    <img src="https://media.giphy.com/media/3o7abKhOpu0NwenH3O/giphy.gif" alt="Cute bear">
+                    <p>Це для тебе!</p>
+                </div>
+                <canvas id="scratchCanvas" width="280" height="280"></canvas>
             </div>
+ <button class="btn-reveal" id="skipBtn">Відкрити одразу, але так не цікаво:(</button>
+           
+        </div>
 
-            <!-- Имя Teddie на ошейнике -->
-            <br><br><br><br><br><div class="absolute" style="top: 62%; left: 50%; transform: translate(-50%, -50%);">
-                <span class="bg-amber-950/90 text-amber-100 text-[10px] sm:text-xs px-3 py-1 rounded-full font-bold tracking-wider shadow-md uppercase border border-amber-800">
-                    Teddy 🐾
-                </span>
-            </div>
-
-            <!-- Текст поверх таблички / открытки -->
-            <div class="absolute inset-0 flex items-center justify-center pointer-events-none" style="padding: 70% 10% 8% 10%;">
-                <p id="message-text" class="bg-white/90 backdrop-blur-xs px-4 py-2 rounded-2xl text-amber-950 font-bold text-center leading-snug shadow-md transition-opacity duration-300" 
-                   style="font-size: clamp(11px, 3vw, 14px);">
-                    Твоя посмішка додає промені до сонечка ✨
-                </p>
+        <!-- Шаг 2: Вопрос -->
+        <div id="question-section">
+            <img src="https://media.giphy.com/media/26BRv0ThflsHCqDrG/giphy.gif" alt="Asking out">
+            <h2>Підеш зі мною в кіно?<br>На вихідному, фільм оберемо разом</h2>
+            <div class="buttons-wrapper" id="btnWrapper">
+                <button class="btn-yes" id="yesBtn">Так! 😍</button>
+                <button class="btn-no" id="noBtn">Ні</button>
             </div>
         </div>
 
-        <p class="text-xs text-white/90 mt-4 drop-shadow animate-pulse text-center">
-            👆 Натисни на Тедді, щоб посміхнутись ще більше
-        </p>
-    </main>
+        <!-- Шаг 3: Успех -->
+        <div id="success-section">
+            <img src="https://media.giphy.com/media/3o7TKSjRrfIPjeiVyM/giphy.gif" alt="Happy">
+            <h2>Ура! 🎉</h2>
+            <p>Я знав, що ти погодишся</p>
+        </div>
+    </div>
 
-    <!-- Нижняя панель с кнопкой -->
-    <footer class="z-10 mb-6 w-full flex flex-col items-center gap-3">
-        <button onclick="changeMessage()" 
-                class="bg-white text-rose-500 font-bold px-8 py-3 rounded-full shadow-lg hover:bg-rose-50 active:scale-95 transition-all text-sm sm:text-base flex items-center gap-2 border-2 border-rose-200">
-            <span>🐾 Інший текст.</span>
-        </button>
-        <p class="text-[10px] text-grey/70">Цікавий факт, чим більше частота натискань на Тедді, тим більше сердечок <br>випадає з під дисплею. Анімація створена виключно унікалізовано для тебе))</p>
-        <p class="text-[10px] text-grey/70"><i>В випадку, якщо не працює генерація натискаючи на Тедді. <br>(на кшталт база даних дала збій) - треба натиснути "інший текст."</i></p>
-        <p class="text-[10px] text-green/70">Сайт створено власноруч з нуля, спеціально для Ксюні❤️, від Едюні :)</p>
-    </footer>
+    <div class="toast" id="toast">Не попала😉</div>
 
-    <!-- Логика -->
     <script>
-        const messages = [
-            "Твоя посмішка це скарб сьогодення ✨",
-            "Ти - найкраще що сталось в цьому дні🌸",
-            "В тебе безмежно гарні оченята👀💖",
-            "С тобою цей світ стає яскравіше та миліше☀️",
-            "Ти - повід для посмішки 🥰",
-            "Поруч з тобою хмари розходяться для променів сонечка 🌤️",
-            "Ти неймовірно чарівна наче космос 🚀💫",
-            "Від твого погляду тають навіть айсберги🧊❤️",
-            "Ти - чарування та натхнення цього дня ☕️✨",
-            "Просто знай: ти неймовірна, і Тедді теж з цим згоден 🐶💕",
-            "Генерація закінчилась, але це не кінець, розробник знає набагато більше! 🥰<br> @breezy_eduard"
-        ];
+        // --- ЛОГИКА СТИРАНИЯ ---
+        const canvas = document.getElementById('scratchCanvas');
+        const ctx = canvas.getContext('2d');
+        const scratchSection = document.getElementById('scratch-section');
+        const questionSection = document.getElementById('question-section');
+        const skipBtn = document.getElementById('skipBtn');
 
-        let currentIndex = 0;
+        ctx.fillStyle = '#ffb7b2';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#fff';
+        ctx.font = '16px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText("Прибираємо зайве тут...", canvas.width / 2, canvas.height / 2);
 
-        function changeMessage() {
-            const textElement = document.getElementById('message-text');
-            const dogImage = document.getElementById('dog-image');
+        let isDrawing = false;
+        let clearedPixels = 0;
 
-            dogImage.classList.add('pop-effect');
-            setTimeout(() => dogImage.classList.remove('pop-effect'), 250);
-
-            textElement.style.opacity = '0';
-
-            setTimeout(() => {
-                currentIndex = (currentIndex + 1) % messages.length;
-                textElement.textContent = messages[currentIndex];
-                textElement.style.opacity = '1';
-            }, 120);
-
-            burstHearts();
+        function scratch(x, y) {
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.beginPath();
+            ctx.arc(x, y, 25, 0, Math.PI * 2, false);
+            ctx.fill();
+            checkProgress();
         }
 
-        function burstHearts() {
-            for (let i = 0; i < 15; i++) {
-                setTimeout(createFloatingHeart, i * 50);
+        function checkProgress() {
+            clearedPixels++;
+            if (clearedPixels > 35) {
+                setTimeout(showQuestion, 300);
             }
         }
 
-        function createFloatingHeart() {
-            const container = document.getElementById('hearts-container');
-            const heart = document.createElement('div');
-            heart.classList.add('heart');
-            heart.innerHTML = ['❤️', '💖', '✨', '🌸', '🐾', '💕', '💘'][Math.floor(Math.random() * 7)];
-            
-            heart.style.left = Math.random() * 85 + 7 + '%';
-            heart.style.fontSize = (Math.random() * 1.3 + 0.8) + 'rem';
-            heart.style.animationDuration = (Math.random() * 1.5 + 2.5) + 's';
-            
-            container.appendChild(heart);
+        canvas.addEventListener('mousedown', (e) => { isDrawing = true; scratch(e.offsetX, e.offsetY); });
+        canvas.addEventListener('mousemove', (e) => { if (isDrawing) scratch(e.offsetX, e.offsetY); });
+        window.addEventListener('mouseup', () => { isDrawing = false; });
 
-            setTimeout(() => {
-                heart.remove();
-            }, 4000);
+        canvas.addEventListener('touchstart', (e) => {
+            isDrawing = true;
+            const rect = canvas.getBoundingClientRect();
+            const touch = e.touches[0];
+            scratch(touch.clientX - rect.left, touch.clientY - rect.top);
+        });
+        canvas.addEventListener('touchmove', (e) => {
+            if (!isDrawing) return;
+            const rect = canvas.getBoundingClientRect();
+            const touch = e.touches[0];
+            scratch(touch.clientX - rect.left, touch.clientY - rect.top);
+            e.preventDefault();
+        });
+        window.addEventListener('touchend', () => { isDrawing = false; });
+
+        skipBtn.addEventListener('click', showQuestion);
+
+        function showQuestion() {
+            scratchSection.style.display = 'none';
+            questionSection.style.display = 'flex';
+            
+            // Ставим кнопку "Нет" рядом с "Да" при первом появлении
+            resetNoButtonPosition();
+            initNoButton();
         }
 
-        setInterval(createFloatingHeart, 800);
+        const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
+        const successSection = document.getElementById('success-section');
+        const toast = document.getElementById('toast');
+        const btnWrapper = document.getElementById('btnWrapper');
+
+        function resetNoButtonPosition() {
+            noBtn.style.position = 'relative';
+            noBtn.style.left = '0px';
+            noBtn.style.top = '0px';
+        }
+
+        const phrases = [
+            "Не попала! 😉",
+            "Мимо! Куда ж ти? 🏃‍♀️",
+            "Ой, кнопка яка невгамонна 💨",
+            "Попробуй ще раз! 😄",
+            "Не так швидко! ✨",
+            "Тільки через «ТАК»!))"
+        ];
+
+        function moveNoButton() {
+            const wrapperRect = btnWrapper.getBoundingClientRect();
+            const btnWidth = noBtn.offsetWidth;
+            const btnHeight = noBtn.offsetHeight;
+
+            // Переводим в absolute, если еще не перевели
+            noBtn.style.position = 'absolute';
+
+            // Ограничиваем зону прыжков строго внутри блока .buttons-wrapper
+            const maxX = wrapperRect.width - btnWidth;
+            const maxY = wrapperRect.height - btnHeight;
+
+            const randomX = Math.max(0, Math.floor(Math.random() * maxX));
+            const randomY = Math.max(0, Math.floor(Math.random() * maxY));
+
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+
+            // Добавляем красивую анимацию прыжка (удаляем класс и добавляем заново для перезапуска анимации)
+            noBtn.classList.remove('jump-anim');
+            void noBtn.offsetWidth; // сброс анимации браузером
+            noBtn.classList.add('jump-anim');
+
+            // Случайная фраза
+            toast.textContent = phrases[Math.floor(Math.random() * phrases.length)];
+            showToast();
+        }
+
+        function showToast() {
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 1200);
+        }
+
+        function initNoButton() {
+            noBtn.addEventListener('mouseover', moveNoButton);
+            noBtn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                moveNoButton();
+            });
+            noBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                moveNoButton();
+            });
+        }
+
+        yesBtn.addEventListener('click', () => {
+            questionSection.style.display = 'none';
+            successSection.style.display = 'flex';
+        });
     </script>
 </body>
 </html>
